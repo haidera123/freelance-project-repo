@@ -17,7 +17,6 @@ let skipSectionArr = [
   "section4",
   "section5",
   "section6",
-  "section8",
   "section9",
 ];
 let arrayQues = allSection;
@@ -59,14 +58,14 @@ function checkForFirstSection() {
     document.getElementById("backBtn").style.display = "none";
     document.getElementById("nextBtn").style.display = "block";
     document.getElementById("calcBtn").style.display = "none";
-  } else if (arrayQues[counter] == "section2") {
-    document.getElementById("backBtn").style.display = "block";
-    document.getElementById("nextBtn").style.display = "block";
-    document.getElementById("calcBtn").style.display = "none";
   } else if (arrayQues[counter] == "section9") {
     document.getElementById("nextBtn").style.display = "none";
     document.getElementById("calcBtn").style.display = "block";
     document.getElementById("backBtn").style.display = "block";
+  } else {
+    document.getElementById("backBtn").style.display = "block";
+    document.getElementById("nextBtn").style.display = "block";
+    document.getElementById("calcBtn").style.display = "none";
   }
 }
 const DATABASE = {
@@ -135,14 +134,18 @@ function calculateResult() {
   let femalePercentage = 50;
 
   if (gender) {
+    femalePercentage += 5;
     malepercentage += -5;
-    malepercentage += -DATABASE["howLongMarried"][howLongMarried];
+    femalePercentage += DATABASE["howLongMarried"][howLongMarried];
+    malepercentage -= DATABASE["howLongMarried"][howLongMarried];
     if (
       DATABASE["howLongMarried"][howLongMarried] -
         DATABASE["howLongLivedTogether"][howLongLivedTogether] >
       0
-    )
-      malepercentage += -5; //howLongLivedTogether
+    ) {
+      malepercentage -= 5; //howLongLivedTogether
+      femalePercentage += 5;
+    }
     let howMuchYouCare = document
       .getElementById("howMuchYouCare")
       .value.toString()
@@ -152,10 +155,14 @@ function calculateResult() {
       childPercentage += el.value * 1;
     });
     malepercentage += childPercentage * (howMuchYouCare[0] / 100);
+    femalePercentage -= childPercentage * (howMuchYouCare[0] / 100);
     femalePercentage += childPercentage * (howMuchYouCare[1] / 100);
+    malepercentage -= childPercentage * (howMuchYouCare[1] / 100);
   } else {
     femalePercentage += 5;
+    malepercentage -= 5;
     femalePercentage += DATABASE["howLongMarried"][howLongMarried];
+    malepercentage -= DATABASE["howLongMarried"][howLongMarried];
 
     if (
       DATABASE["howLongMarried"][howLongMarried] -
@@ -165,10 +172,15 @@ function calculateResult() {
       femalePercentage +=
         DATABASE["howLongMarried"][howLongMarried] -
         DATABASE["howLongLivedTogether"][howLongLivedTogether];
+      malepercentage -=
+        DATABASE["howLongMarried"][howLongMarried] -
+        DATABASE["howLongLivedTogether"][howLongLivedTogether];
     }
     femalePercentage += DATABASE["yourAge"][yourAge];
+    malepercentage -= DATABASE["yourAge"][yourAge];
 
     femalePercentage += DATABASE["partnerAge"][partnerAge];
+    malepercentage -= DATABASE["partnerAge"][partnerAge];
     let howMuchYouCare = document
       .getElementById("howMuchYouCare")
       .value.toString()
@@ -178,7 +190,9 @@ function calculateResult() {
       childPercentage += el.value * 1;
     });
     femalePercentage += childPercentage * (howMuchYouCare[0] / 100);
+    malepercentage -= childPercentage * (howMuchYouCare[0] / 100);
     malepercentage += childPercentage * (howMuchYouCare[1] / 100);
+    femalePercentage -= childPercentage * (howMuchYouCare[1] / 100);
   }
   let assets = 0;
   document.querySelectorAll("#addAsset").forEach((el) => {
@@ -204,6 +218,7 @@ function calculateResult() {
       yourPartnerPortion = 80;
       yourPartnerPortion = 20;
     }
+    console.log(yourportion, yourPartnerPortion);
   }
   console.log(yourportion, yourPartnerPortion);
   let total = assets - liablilty;
@@ -391,7 +406,8 @@ window.onload = function () {
         function () {
           console.log("SUCCESS!");
           document.getElementById("btn__quote").innerHTML = "Sent";
-          alert("Please check your email inbox for result.");
+          document.getElementById("email__page").style.display = "block";
+          document.getElementById("resultContainerCalc").style.display = "none";
         },
         function (error) {
           console.log("FAILED...", error);
