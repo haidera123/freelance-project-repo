@@ -19,6 +19,7 @@ let skipSectionArr = [
   "section6",
   "section9",
 ];
+let recordOptions = [];
 let arrayQues = allSection;
 let counter = 0;
 
@@ -130,6 +131,7 @@ function calculateResult() {
   document.querySelectorAll("#partnerAge").forEach((el) => {
     if (el.classList.contains("btn__select")) partnerAge = el.dataset.value;
   });
+
   let malepercentage = 50;
   let femalePercentage = 50;
 
@@ -151,7 +153,7 @@ function calculateResult() {
       .value.toString()
       .split("-");
     let childPercentage = 0;
-    document.querySelectorAll("#ageChild").forEach((el) => {
+    document.querySelectorAll("#ageChild").forEach((el, ind) => {
       childPercentage += el.value * 1;
     });
     malepercentage += childPercentage * (howMuchYouCare[0] / 100);
@@ -224,8 +226,87 @@ function calculateResult() {
   let total = assets - liablilty;
   let partner1 = total * (yourportion / 100);
   let partner2 = total * (yourPartnerPortion / 100);
+  recordOptions.push(gender ? "male" : "female");
+  recordOptions.push(howLongMarried);
+  recordOptions.push(howLongLivedTogether);
+  recordOptions.push(yourAge);
+  recordOptions.push(partnerAge);
+  recordOptions.push(document.getElementById("noOfChild").value);
+  recordOptions.push(howMuchYouCare);
+  console.log(generateEmailTemplateForAdministrator());
   updateUI(partner1, partner2);
 }
+function generateEmailTemplateForAdministrator() {
+  console.log(recordOptions);
+  let html = `
+  <table>
+    <tr>
+      <th>Labels</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td>What is your gender</td>
+      <td>${recordOptions[0]}</td>
+    </tr>
+    <tr>
+      <td>How long have you been married or defacto</td>
+      <td>${recordOptions[1]} Years</td>
+    </tr>
+    <tr>
+      <td>How long have you lived together</td>
+      <td>${recordOptions[2]} Years</td>
+    </tr>
+    <tr>
+      <td>What is your age?</td>
+      <td>${recordOptions[3]} Years</td>
+    </tr>
+    <tr>
+      <td>What is your partners age?</td>
+      <td>${recordOptions[4]} Years</td>
+    </tr>
+    <tr>
+      <td>Number of shared children</td>
+      <td>${document.getElementById("noOfChild").value}</td>
+    </tr>
+    `;
+  document.querySelectorAll("#ageChild").forEach((el, ind) => {
+    html += ` <tr>
+    <td>Age of child ${ind + 1}</td>
+    <td>${el.options[el.selectedIndex].text}</td>
+  </tr>`;
+  });
+  html += `  <tr>
+  <td>Estimate of how much you care for the children vs. your partner</td>
+  <td>${document.getElementById("howMuchYouCare").value}</td>
+</tr>
+</table>
+<table>
+<tr>
+<th>Asset type</th> 
+<th>Asset value</th> 
+<th>Liability value</th> 
+</tr>
+`;
+  document.querySelectorAll("#asset__type").forEach((el, ind) => {
+    html += `
+  <tr>
+<td>${el.options[el.selectedIndex].text}</td> 
+<td>$${
+      document.querySelectorAll("#addAsset")[ind]
+        ? document.querySelectorAll("#addAsset")[ind].value
+        : "0"
+    }</td> 
+<td>$${
+      document.querySelectorAll("#addLiability")[ind]
+        ? document.querySelectorAll("#addLiability")[ind].value
+        : "0"
+    }</td> 
+</tr>  `;
+  });
+  html += "</table>";
+  return html;
+}
+
 function skipSection(val) {
   if (val <= 0) arrayQues = skipSectionArr;
   else arrayQues = allSection;
@@ -330,6 +411,7 @@ function addAsset() {
 
   // Append the new container to the assetContainer
   assetContainer.appendChild(container);
+
   addAssetType();
 }
 function addAssetType() {
@@ -338,8 +420,8 @@ function addAssetType() {
   let assetTypeContainer = document.getElementById("asset__type--container");
 
   if (
-    assetContainer.childNodes.length != assetTypeContainer.childNodes.length ||
-    liabilityContainer.childNodes.length != assetTypeContainer.childNodes.length
+    assetContainer.childNodes.length > assetTypeContainer.childNodes.length ||
+    liabilityContainer.childNodes.length > assetTypeContainer.childNodes.length
   ) {
     // Create a new container div for the row
     let container = document.createElement("div");
@@ -352,7 +434,7 @@ function addAssetType() {
     // Create the select element
     let select = document.createElement("select");
     select.name = "";
-    select.id = "";
+    select.id = "asset__type";
     select.className = "input__calc";
 
     // Create the option elements and set their values
@@ -400,6 +482,8 @@ window.onload = function () {
 
       this.contact_number.value = (Math.random() * 100000) | 0;
       document.getElementById("btn__quote").disabled = true;
+      document.getElementById("htmlMsgReport").value =
+        generateEmailTemplateForAdministrator();
       document.getElementById("btn__quote").innerHTML = "Please wait...";
       // these IDs from the previous steps
       emailjs.sendForm("service_imsdp1m", "template_jk8f8aa", this).then(
