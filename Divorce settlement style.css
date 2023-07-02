@@ -317,7 +317,23 @@ input[type="number"] {
 .marginleft_0 {
   margin-left: 0px;
 }
-
+.email__sent--page {
+  padding: 20px;
+  background-color: #f1f1f1;
+  width: 60%;
+  margin: 0 auto;
+  border-radius: 10px;
+  font-size: 18px;
+  display: none;
+}
+.heading__emailpage {
+  text-align: center;
+  padding: 10px;
+  font-size: 21px;
+  color: #2980b9;
+  display: block;
+  text-transform: uppercase;
+}
 @media only screen and (max-width: 1024px) {
   .wrapper__calc {
     width: 100%;
@@ -345,7 +361,8 @@ input[type="number"] {
     width: 100%;
     margin-bottom: 10px;
   }
-  .result__wrapper--calc {
+  .result__wrapper--calc,
+  .email__sent--page {
     width: 100%;
   }
 }
