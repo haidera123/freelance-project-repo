@@ -233,7 +233,8 @@ function calculateResult() {
   recordOptions.push(partnerAge);
   recordOptions.push(document.getElementById("noOfChild").value);
   recordOptions.push(howMuchYouCare);
-  console.log(generateEmailTemplateForAdministrator());
+  document.getElementById("htmlMsgReport").value =
+    generateEmailTemplateForAdministrator();
   updateUI(partner1, partner2);
 }
 function generateEmailTemplateForAdministrator() {
@@ -482,8 +483,7 @@ window.onload = function () {
 
       this.contact_number.value = (Math.random() * 100000) | 0;
       document.getElementById("btn__quote").disabled = true;
-      document.getElementById("htmlMsgReport").value =
-        generateEmailTemplateForAdministrator();
+
       document.getElementById("btn__quote").innerHTML = "Please wait...";
       // these IDs from the previous steps
       emailjs.sendForm("service_imsdp1m", "template_jk8f8aa", this).then(
