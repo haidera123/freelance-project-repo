@@ -1,5 +1,5 @@
 let isCalculate = true;
-let netSolarCostVal = 29900;
+// let netSolarCostVal = 29900;
 // Calculate Result
 let energyExpenses = {
   inflationRate: [],
@@ -189,7 +189,7 @@ function calculateResult() {
     solarTaxCreditVal +
     solarTaxMaxExtraIncentiveVal +
     state_local_utility_incentiveRes;
-  netSolarCostVal = totalSolarSystemCost - totalSolarIncentiveVal;
+  let netSolarCostVal = totalSolarSystemCost - totalSolarIncentiveVal;
 
   // Perform Calculations
 
@@ -215,9 +215,14 @@ function calculateResult() {
     "= " + formattedValue.format(totalSolarIncentiveVal);
   document.getElementById("netSolarCostVal").innerHTML =
     formattedValue.format(netSolarCostVal);
+  document.getElementById("net_solar_cost").value =
+    formattedValue.format(netSolarCostVal);
 }
 
 function calculateEnergyBankRes() {
+  netSolarCostVal = filterValue(
+    document.getElementById("net_solar_cost").value
+  );
   let inflation__rate =
     filterValue(document.getElementById("inflation__rate").value) / 100;
   let electricBill =
@@ -458,7 +463,8 @@ function current() {
 })();
 
 function downloadPDF() {
-  var doc = new jsPDF();
+  var doc = new jsPDF("l", "mm", [297, 210]);
+
   // Add title at the top
   let topTitle = doc.splitTextToSize(`SOLAR TAX MAX™`);
   doc.setTextColor(6, 6, 104).setFontSize(15).text(topTitle, 80, 10);
