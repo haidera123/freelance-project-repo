@@ -778,3 +778,5 @@ const formattedValue = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 0,
   maximumFractionDigits: 0,
 });
+calculateResult();
+calculateEnergyBankRes();
