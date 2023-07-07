@@ -29,6 +29,10 @@ body {
   display: block;
   width: 100%;
 }
+.darkGreenClr {
+  background-color: #0a8c28 !important;
+  color: #fff;
+}
 .header__calc {
   width: 100%;
   padding: 10px;
@@ -45,14 +49,14 @@ body {
   font-weight: 400;
   color: #464646;
 }
-.error__container{
+.error__container {
   background-color: #ff000072;
   border-radius: 5px;
   width: 100%;
   margin-bottom: 10px;
   display: none;
 }
-.err__msg{
+.err__msg {
   color: #fff;
   display: block;
   padding: 10px;
@@ -76,11 +80,15 @@ body {
 .label__calc {
   display: block;
   font-size: 17px;
+  color: #000;
   margin: 5px 0px;
 }
 .combined__calc {
   width: 50%;
   padding: 5px 0px;
+}
+.energy__banking--container {
+  color: #000;
 }
 .section__calc {
   display: grid;
@@ -317,7 +325,7 @@ body {
   margin: 10px auto;
   font-size: 16px;
 }
-.section__info{
+.section__info {
   width: 100%;
 }
 .grid3x3 {
@@ -347,7 +355,7 @@ body {
   background-color: #ddd;
 }
 .emphasize__blue {
-  background-color: #062b91;
+  background-color: #035a17;
 }
 .bg__gray {
   background-color: #f2f2f2;
@@ -366,9 +374,12 @@ body {
   background-color: #ff0000;
   color: #fff;
 }
+.bg__red--emphasize {
+  background-color: #a70000;
+}
 .bg__blue {
-  background-color: #0839C5;
-  color: #fff;
+  background-color: #0a8c28;
+  background-color: #f2f2f2;
 }
 @media only screen and (max-width: 900px) {
   .wrapper__calc {
