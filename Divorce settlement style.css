@@ -376,3 +376,10 @@ input[type="number"] {
     margin-bottom: 10px;
   }
 }
+#myDiv{
+  margin-bottom: 300px;
+display:block;
+}
+#header_stickynav242116 {
+position: unset !important;
+}
