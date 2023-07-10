@@ -40,14 +40,14 @@ function next() {
   checkForFirstSection();
   hideAllQuestions();
   document.getElementById(arrayQues[counter]).style.display = "block";
-  scrollToDiv()
+  scrollToDiv();
 }
 function previous() {
   counter--;
   checkForFirstSection();
   hideAllQuestions();
   document.getElementById(arrayQues[counter]).style.display = "block";
-  scrollToDiv()
+  scrollToDiv();
 }
 
 function hideAllQuestions() {
@@ -517,4 +517,9 @@ var formatter = new Intl.NumberFormat("en-US", {
 function scrollToDiv() {
   var element = document.documentElement;
   element.scrollIntoView({ behavior: "smooth" });
+  scrollByAdditional();
+  return;
+}
+function scrollByAdditional() {
+  window.scrollBy(0, 100);
 }
