@@ -515,10 +515,14 @@ var formatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
 });
 function scrollToDiv() {
-  var element = document.documentElement;
-  element.scrollIntoView({ behavior: "smooth" });
-  scrollByAdditional();
-  return;
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+
+  setTimeout(function () {
+    window.scrollBy(0, 100);
+  }, 500); // Adjust the delay as needed
 }
 function scrollByAdditional() {
   window.scrollBy(0, 100);
