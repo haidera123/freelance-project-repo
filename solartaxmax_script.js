@@ -220,6 +220,23 @@ function calculateResult() {
 }
 
 function calculateEnergyBankRes() {
+  energyExpenses = {
+    inflationRate: [],
+    electricBill: [],
+    autoFuelBill: [],
+    totalEnergyBill: [],
+    cumulativeEnergyBill: [],
+  };
+  energySaving = {
+    solarBill: [],
+    cumulativeSolarBill: [],
+    solarSavings: [],
+    roi: [],
+  };
+  energyBanking = {
+    investmentRateOfSolarSaving: [],
+    cumulativeROI: [],
+  };
   netSolarCostVal = filterValue(
     document.getElementById("net_solar_cost").value
   );
@@ -309,7 +326,7 @@ let energyBanking = {
     energyBanking["cumulativeROI"][x] =
       energyBanking["investmentRateOfSolarSaving"][x] / netSolarCostVal;
   }
-
+  console.log(energyExpenses, energyBanking);
   updateEnergySavingUI(energyExpenses, energyBanking);
 }
 function updateEnergySavingUI(energyExpenses, energyBanking) {
@@ -350,6 +367,7 @@ function updateEnergySavingUI(energyExpenses, energyBanking) {
 
   document.querySelectorAll("#energyExpense").forEach((el, ind) => {
     el.innerHTML = formattedValue.format(uiEnergyExpense[ind]);
+    console.log(uiEnergyExpense[ind]);
   });
   document.querySelectorAll("#energyBanking").forEach((el, ind) => {
     el.innerHTML = formattedValue.format(uiEnergyBanking[ind]);
@@ -366,12 +384,14 @@ function formatValue(inputFields) {
     // maximumFractionDigits: 0,
   }).format(inputValue);
   inputFields.value = formattedValue;
+  calculateEnergyBankRes();
 }
 function formatPercentage(inputFields) {
   let inputValue = inputFields.value;
   inputValue = inputValue.replace(/[%,]/g, ""); // remove % and comma
 
   inputFields.value = inputValue + "%";
+  calculateEnergyBankRes();
 }
 function calculateValue(val, data, rate, calcv2) {
   console.log(val);
