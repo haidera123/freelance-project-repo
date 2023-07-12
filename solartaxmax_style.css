@@ -264,6 +264,7 @@ body {
 /* Phase 2 style customization */
 .section2 {
   /* display: block; */
+  margin-top: 50px;
 }
 .section1 {
   /* display: none; */
@@ -425,5 +426,11 @@ body {
   }
   .non__responsive {
     display: none;
+  }
+  .heading__section--calc {
+    font-size: 12px;
+  }
+  .item__esres{
+    font-size: 12px;
   }
 }
