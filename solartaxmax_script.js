@@ -275,11 +275,15 @@ function calculateEnergyBankRes() {
     energyExpenses["totalEnergyBill"].push(
       energyExpenses["electricBill"][x] + energyExpenses["autoFuelBill"][x]
     );
-    if (x == 1)
+    if (x == 1) {
+      // energyExpenses["cumulativeEnergyBill"].push(
+      //   energyExpenses["totalEnergyBill"][x]
+      // );
       energyExpenses["cumulativeEnergyBill"].push(
-        energyExpenses["totalEnergyBill"][x]
+        energyExpenses["cumulativeEnergyBill"][x - 1] +
+          energyExpenses["totalEnergyBill"][x]
       );
-    else
+    } else
       energyExpenses["cumulativeEnergyBill"].push(
         energyExpenses["cumulativeEnergyBill"][x - 1] +
           energyExpenses["totalEnergyBill"][x]
@@ -343,8 +347,6 @@ function updateEnergySavingUI(energyExpenses, energyBanking) {
     energyExpenses["cumulativeEnergyBill"][3],
     energyExpenses["cumulativeEnergyBill"][4],
     energyExpenses["cumulativeEnergyBill"][5],
-    energyExpenses["cumulativeEnergyBill"][8],
-    energyExpenses["cumulativeEnergyBill"][9],
     energyExpenses["cumulativeEnergyBill"][10],
     energyExpenses["cumulativeEnergyBill"][25],
     energyExpenses["cumulativeEnergyBill"][50],
@@ -357,8 +359,6 @@ function updateEnergySavingUI(energyExpenses, energyBanking) {
     energyBanking["investmentRateOfSolarSaving"][3],
     energyBanking["investmentRateOfSolarSaving"][4],
     energyBanking["investmentRateOfSolarSaving"][5],
-    energyBanking["investmentRateOfSolarSaving"][8],
-    energyBanking["investmentRateOfSolarSaving"][9],
     energyBanking["investmentRateOfSolarSaving"][10],
     energyBanking["investmentRateOfSolarSaving"][25],
     energyBanking["investmentRateOfSolarSaving"][50],
@@ -483,30 +483,63 @@ function current() {
 })();
 
 function downloadPDF() {
-  var doc = new jsPDF("l", "mm", [297, 210]);
+  var doc = new jsPDF("l", "mm", [370, 200]);
 
   // Add title at the top
-  let topTitle = doc.splitTextToSize(`SOLAR TAX MAX™`);
-  doc.setTextColor(6, 6, 104).setFontSize(15).text(topTitle, 80, 10);
-
-  //   // Background Color
-  doc.setTextColor(255, 255, 255);
-
-  doc.setFillColor(248, 247, 241);
-  doc.rect(6, 25, 190, 30, "F");
-  let splitTitle = doc.splitTextToSize(`Note: We can add some text here...`);
-  doc.setTextColor(90, 90, 90).setFontSize(11).text(splitTitle, 25, 20);
-
-  splitTitle = doc.splitTextToSize(`Hi, We can add some text here`, 180);
-  // Inputs
-  doc.setTextColor(0, 0, 0).setFontSize(15).text(splitTitle, 25, 35);
+  let topTitle = doc.splitTextToSize(`Energy Banking Plan™`);
+  doc.setTextColor(6, 6, 104).setFontSize(18).text(topTitle, 170, 10);
   doc.autoTable({
     theme: "striped",
     styles: {
       fontSize: 10,
     },
 
-    startY: 60,
+    startY: 20,
+    head: [["EB", "Inputs"]],
+    body: [
+      ["Net Solar Costs", document.getElementById("net_solar_cost").value],
+      ["Inflation Rate", document.getElementById("inflation__rate").value],
+      ["Electric Bill", document.getElementById("electricBill").value],
+      ["Auto-Fuel Bill", document.getElementById("autoFuelBill").value],
+      ["Solar Loan Payment (High)", document.getElementById("solarBill").value],
+      [
+        "Investment Rate of Solar Savings",
+        document.getElementById("invstmtRateOfSolarSaving").value,
+      ],
+    ],
+  });
+
+  //   // Background Color
+  doc.setTextColor(255, 255, 255);
+
+  doc.setFillColor(192, 57, 43);
+  doc.rect(14, 75, 152, 20, "F");
+  // let splitTitle = doc.splitTextToSize(`Note: We can add some text here...`);
+  // doc.setTextColor(90, 90, 90).setFontSize(11).text(splitTitle, 25, 20);
+
+  let splitTitle = doc.splitTextToSize(`Life Energy Expenses`, 180);
+  // Inputs
+  doc.setTextColor(255, 255, 255).setFontSize(15).text(splitTitle, 70, 85);
+  // Energy Saving
+  doc.setFillColor(20, 164, 20);
+  doc.rect(153, 75, 118, 20, "F");
+
+  splitTitle = doc.splitTextToSize(`Energy Saving`, 180);
+  doc.setTextColor(255, 255, 255).setFontSize(15).text(splitTitle, 200, 85);
+  // Energy Banking
+  doc.setFillColor(8, 57, 197);
+  doc.rect(271, 75, 85, 20, "F");
+
+  splitTitle = doc.splitTextToSize(`Energy Banking`, 180);
+  // Inputs
+  doc.setTextColor(255, 255, 255).setFontSize(15).text(splitTitle, 300, 85);
+  doc.autoTable({
+    theme: "striped",
+    styles: {
+      fontSize: 10,
+    },
+
+    startY: 90,
     head: [
       [
         "",
@@ -515,8 +548,15 @@ function downloadPDF() {
         "Auto-Fuel Bill",
         "Total Energy Bill",
         "Cumulative Energy Bill",
+        "Solar Bill",
+        "Comulative Solar Bill",
+        "Solar Savings",
+        "ROI",
+        "Investment Rate of Solar Savings",
+        "Cumulative ROI",
       ],
     ],
+
     body: [
       [
         "Today",
@@ -525,7 +565,16 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][0])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][0])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][0])}`,
+        `${formattedValue.format(energySaving["solarBill"][0])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][0])}`,
+        `${formattedValue.format(energySaving["solarSavings"][0])}`,
+        `${(energySaving["roi"][0] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][0]
+        )}`,
+        `${(energyBanking["cumulativeROI"][0] * 100).toFixed(2)}%`,
       ],
+
       [
         "Year 1",
         `${energyExpenses["inflationRate"][1] * 100}%`,
@@ -533,6 +582,14 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][1])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][1])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][1])}`,
+        `${formattedValue.format(energySaving["solarBill"][1])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][1])}`,
+        `${formattedValue.format(energySaving["solarSavings"][1])}`,
+        `${(energySaving["roi"][1] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][1]
+        )}`,
+        `${(energyBanking["cumulativeROI"][1] * 100).toFixed(2)}%`,
       ],
       [
         "Year 2",
@@ -541,6 +598,14 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][2])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][2])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][2])}`,
+        `${formattedValue.format(energySaving["solarBill"][2])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][2])}`,
+        `${formattedValue.format(energySaving["solarSavings"][2])}`,
+        `${(energySaving["roi"][2] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][2]
+        )}`,
+        `${(energyBanking["cumulativeROI"][2] * 100).toFixed(2)}%`,
       ],
       [
         "Year 3",
@@ -549,6 +614,14 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][3])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][3])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][3])}`,
+        `${formattedValue.format(energySaving["solarBill"][3])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][3])}`,
+        `${formattedValue.format(energySaving["solarSavings"][3])}`,
+        `${(energySaving["roi"][3] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][3]
+        )}`,
+        `${(energyBanking["cumulativeROI"][3] * 100).toFixed(2)}%`,
       ],
       [
         "Year 4",
@@ -557,6 +630,14 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][4])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][4])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][4])}`,
+        `${formattedValue.format(energySaving["solarBill"][4])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][4])}`,
+        `${formattedValue.format(energySaving["solarSavings"][4])}`,
+        `${(energySaving["roi"][4] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][4]
+        )}`,
+        `${(energyBanking["cumulativeROI"][4] * 100).toFixed(2)}%`,
       ],
       [
         "Year 5",
@@ -565,6 +646,14 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][5])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][5])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][5])}`,
+        `${formattedValue.format(energySaving["solarBill"][5])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][5])}`,
+        `${formattedValue.format(energySaving["solarSavings"][5])}`,
+        `${(energySaving["roi"][5] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][5]
+        )}`,
+        `${(energyBanking["cumulativeROI"][5] * 100).toFixed(2)}%`,
       ],
       [
         "Year 10",
@@ -573,6 +662,14 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][10])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][10])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][10])}`,
+        `${formattedValue.format(energySaving["solarBill"][10])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][10])}`,
+        `${formattedValue.format(energySaving["solarSavings"][10])}`,
+        `${(energySaving["roi"][10] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][10]
+        )}`,
+        `${(energyBanking["cumulativeROI"][10] * 100).toFixed(2)}%`,
       ],
       [
         "Year 25",
@@ -581,6 +678,14 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][25])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][25])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][25])}`,
+        `${formattedValue.format(energySaving["solarBill"][25])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][25])}`,
+        `${formattedValue.format(energySaving["solarSavings"][25])}`,
+        `${(energySaving["roi"][25] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][25]
+        )}`,
+        `${(energyBanking["cumulativeROI"][25] * 100).toFixed(2)}%`,
       ],
       [
         "Year 50",
@@ -589,6 +694,14 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][50])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][50])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][50])}`,
+        `${formattedValue.format(energySaving["solarBill"][50])}`,
+        `${formattedValue.format(energySaving["cumulativeSolarBill"][50])}`,
+        `${formattedValue.format(energySaving["solarSavings"][50])}`,
+        `${(energySaving["roi"][50] * 100).toFixed(2)}%`,
+        `${formattedValue.format(
+          energyBanking["investmentRateOfSolarSaving"][50]
+        )}`,
+        `${(energyBanking["cumulativeROI"][50] * 100).toFixed(2)}%`,
       ],
       [
         "Year 100",
@@ -597,191 +710,10 @@ function downloadPDF() {
         `${formattedValue.format(energyExpenses["autoFuelBill"][100])}`,
         `${formattedValue.format(energyExpenses["totalEnergyBill"][100])}`,
         `${formattedValue.format(energyExpenses["cumulativeEnergyBill"][100])}`,
-      ],
-    ],
-  });
-
-  doc.setTextColor(255, 255, 255);
-
-  doc.setFillColor(192, 57, 43);
-  doc.rect(6, 150, 190, 30, "F");
-
-  splitTitle = doc.splitTextToSize(
-    `Energy Expenses, We can add some text here`,
-    180
-  );
-  // Inputs
-  doc.setTextColor(255, 255, 255).setFontSize(15).text(splitTitle, 25, 160);
-  doc.autoTable({
-    theme: "striped",
-    styles: {
-      fontSize: 10,
-    },
-
-    startY: 190,
-    head: [["", "Solar Bill", "Comulative Solar Bill", "Solar Savings", "ROI"]],
-    body: [
-      [
-        "Today",
-        `${formattedValue.format(energySaving["solarBill"][0])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][0])}`,
-        `${formattedValue.format(energySaving["solarSavings"][0])}`,
-        `${(energySaving["roi"][0] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 1",
-        `${formattedValue.format(energySaving["solarBill"][1])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][1])}`,
-        `${formattedValue.format(energySaving["solarSavings"][1])}`,
-        `${(energySaving["roi"][1] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 2",
-        `${formattedValue.format(energySaving["solarBill"][2])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][2])}`,
-        `${formattedValue.format(energySaving["solarSavings"][2])}`,
-        `${(energySaving["roi"][2] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 3",
-        `${formattedValue.format(energySaving["solarBill"][3])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][3])}`,
-        `${formattedValue.format(energySaving["solarSavings"][3])}`,
-        `${(energySaving["roi"][3] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 4",
-        `${formattedValue.format(energySaving["solarBill"][4])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][4])}`,
-        `${formattedValue.format(energySaving["solarSavings"][4])}`,
-        `${(energySaving["roi"][4] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 5",
-        `${formattedValue.format(energySaving["solarBill"][5])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][5])}`,
-        `${formattedValue.format(energySaving["solarSavings"][5])}`,
-        `${(energySaving["roi"][5] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 10",
-        `${formattedValue.format(energySaving["solarBill"][10])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][10])}`,
-        `${formattedValue.format(energySaving["solarSavings"][10])}`,
-        `${(energySaving["roi"][10] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 25",
-        `${formattedValue.format(energySaving["solarBill"][25])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][25])}`,
-        `${formattedValue.format(energySaving["solarSavings"][25])}`,
-        `${(energySaving["roi"][25] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 50",
-        `${formattedValue.format(energySaving["solarBill"][50])}`,
-        `${formattedValue.format(energySaving["cumulativeSolarBill"][50])}`,
-        `${formattedValue.format(energySaving["solarSavings"][50])}`,
-        `${(energySaving["roi"][50] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 100",
         `${formattedValue.format(energySaving["solarBill"][100])}`,
         `${formattedValue.format(energySaving["cumulativeSolarBill"][100])}`,
         `${formattedValue.format(energySaving["solarSavings"][100])}`,
         `${(energySaving["roi"][100] * 100).toFixed(2)}%`,
-      ],
-    ],
-  });
-  // Targets
-  doc.addPage();
-  //   // Background Color
-  doc.setTextColor(255, 255, 255);
-
-  doc.setFillColor(8, 57, 197);
-  doc.rect(6, 25, 190, 30, "F");
-  doc.setTextColor(255, 255, 255).setFontSize(11).text(splitTitle, 25, 20);
-
-  splitTitle = doc.splitTextToSize(
-    `Energy Banking™, We can add some text here`,
-    180
-  );
-  // Inputs
-  doc.setTextColor(255, 255, 255).setFontSize(15).text(splitTitle, 25, 35);
-  doc.autoTable({
-    theme: "striped",
-    styles: {
-      fontSize: 10,
-    },
-
-    startY: 60,
-    head: [["", "Investment Rate of Solar Savings", "Cumulative ROI"]],
-    body: [
-      [
-        "Today",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][0]
-        )}`,
-        `${(energyBanking["cumulativeROI"][0] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 1",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][1]
-        )}`,
-        `${(energyBanking["cumulativeROI"][1] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 2",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][2]
-        )}`,
-        `${(energyBanking["cumulativeROI"][2] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 3",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][3]
-        )}`,
-        `${(energyBanking["cumulativeROI"][3] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 4",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][4]
-        )}`,
-        `${(energyBanking["cumulativeROI"][4] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 5",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][5]
-        )}`,
-        `${(energyBanking["cumulativeROI"][5] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 10",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][10]
-        )}`,
-        `${(energyBanking["cumulativeROI"][10] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 25",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][25]
-        )}`,
-        `${(energyBanking["cumulativeROI"][25] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 50",
-        `${formattedValue.format(
-          energyBanking["investmentRateOfSolarSaving"][50]
-        )}`,
-        `${(energyBanking["cumulativeROI"][50] * 100).toFixed(2)}%`,
-      ],
-      [
-        "Year 100",
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][100]
         )}`,
@@ -789,12 +721,6 @@ function downloadPDF() {
       ],
     ],
   });
-
-  splitTitle = doc.splitTextToSize(
-    `(We can add your contact details here) The Growth Team @ Solar Tax Max\nEsteban, Kevin, Matt, Lyndia & Susan\n\nPS. Want to see if you quality for a risk-free growth compaign?\nApply now on our website http://bit.ly/PG-apply-now.`,
-    180
-  );
-  doc.text(10, 240, splitTitle);
 
   doc.save("Solar_Tax_Max_Report");
 }
