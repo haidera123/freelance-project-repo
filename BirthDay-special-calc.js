@@ -15541,7 +15541,7 @@ function messageBirthDay(month) {
       "March into this new age with a spring in your step! Happy birthday, and may you bloom with happiness all year long!";
   } else if (month === 4) {
     msg =
-      "Hoping your birthday in April showers you with laughter, blossoms of joy, and the sweetness of life's little delights!";
+      "Hope your April birthday showers you with laughter, blossoms of joy, and the sweetness of life's little delights!";
   } else if (month === 5) {
     msg =
       "Happy May-day! May your birthday be as radiant as the spring sun, and may your year be one of growth and success!";
