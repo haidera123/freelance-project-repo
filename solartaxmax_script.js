@@ -484,9 +484,8 @@ function current() {
 
 function downloadPDF() {
   var doc = new jsPDF("l", "mm", [370, 200]);
-
   // Add title at the top
-  let topTitle = doc.splitTextToSize(`Energy Banking Plan™`);
+  let topTitle = doc.splitTextToSize(`SOLAR TAX MAX™`);
   doc.setTextColor(6, 6, 104).setFontSize(18).text(topTitle, 170, 10);
   doc.autoTable({
     theme: "striped",
@@ -495,7 +494,68 @@ function downloadPDF() {
     },
 
     startY: 20,
-    head: [["EB", "Inputs"]],
+    head: [["SOLAR TAX MAX™", "Inputs"]],
+    body: [
+      [
+        "Adjusted Gross Income",
+        document.getElementById("estimatedHousehold").value,
+      ],
+      [
+        "Tax Filing Status",
+        document.getElementById("taxFillingStatus").options[
+          document.getElementById("taxFillingStatus").selectedIndex
+        ].text,
+      ],
+      [
+        "Total Solar System Cost",
+        document.getElementById("totalSolarSystemCost").value,
+      ],
+      [
+        "State, Local, & Utility Incentives",
+        document.getElementById("state_local_utility_incentive").value,
+      ],
+    ],
+  });
+  doc.autoTable({
+    theme: "striped",
+    styles: {
+      fontSize: 10,
+    },
+
+    startY: 80,
+    head: [["SOLAR TAX MAX™", "Outputs"]],
+    body: [
+      [
+        "Total Solar System Cost",
+        document.getElementById("totalsolarTaxCreditVal").innerHTML,
+      ],
+      ["Solar Tax Credit %", `X ${document.getElementById("solarTaxCreditPer").innerHTML}`],
+      ["Solar Tax Credit $", document.getElementById("solarTaxCreditVal").innerHTML],
+      [
+        "Solar Tax Max™ Extra Incentives",
+        `${document.getElementById("solarTaxMaxExtraIncentiveVal").innerHTML}`,
+      ],
+      [
+        "State Local Utility Incentives",
+        `${document.getElementById("state_local_utility_incentiveRes").innerHTML}`,
+      ],
+      ["Total Solar Incentives", document.getElementById("totalSolarIncentiveVal").innerHTML],
+      ["Net Solar Costs", document.getElementById("netSolarCostVal").innerHTML],
+    ],
+  });
+  doc.addPage();
+
+  // Add title at the top
+  topTitle = doc.splitTextToSize(`Energy Banking Plan™`);
+  doc.setTextColor(6, 6, 104).setFontSize(18).text(topTitle, 170, 10);
+  doc.autoTable({
+    theme: "striped",
+    styles: {
+      fontSize: 10,
+    },
+
+    startY: 20,
+    head: [["Energy Banking Plan™", "Inputs"]],
     body: [
       ["Net Solar Costs", document.getElementById("net_solar_cost").value],
       ["Inflation Rate", document.getElementById("inflation__rate").value],
@@ -513,28 +573,28 @@ function downloadPDF() {
   doc.setTextColor(255, 255, 255);
 
   doc.setFillColor(192, 57, 43);
-  doc.rect(14, 75, 152, 20, "F");
+  doc.rect(14, 75, 152, 15, "F");
   // let splitTitle = doc.splitTextToSize(`Note: We can add some text here...`);
   // doc.setTextColor(90, 90, 90).setFontSize(11).text(splitTitle, 25, 20);
 
-  let splitTitle = doc.splitTextToSize(`Life Energy Expenses`, 180);
+  let splitTitle = doc.splitTextToSize(`Lifetime Energy Expenses`, 180);
   // Inputs
   doc.setTextColor(255, 255, 255).setFontSize(15).text(splitTitle, 70, 85);
   // Energy Saving
-  doc.setFillColor(20, 164, 20);
-  doc.rect(153, 75, 118, 20, "F");
+  doc.setFillColor(20, 164, 15);
+  doc.rect(153, 75, 118, 15, "F");
 
-  splitTitle = doc.splitTextToSize(`Energy Saving`, 180);
+  splitTitle = doc.splitTextToSize(`Energy Savings`, 180);
   doc.setTextColor(255, 255, 255).setFontSize(15).text(splitTitle, 200, 85);
   // Energy Banking
   doc.setFillColor(8, 57, 197);
-  doc.rect(271, 75, 85, 20, "F");
+  doc.rect(271, 75, 85, 15, "F");
 
-  splitTitle = doc.splitTextToSize(`Energy Banking`, 180);
+  splitTitle = doc.splitTextToSize(`Energy Banking Plan™`, 180);
   // Inputs
   doc.setTextColor(255, 255, 255).setFontSize(15).text(splitTitle, 300, 85);
   doc.autoTable({
-    theme: "striped",
+    theme: "plain",
     styles: {
       fontSize: 10,
     },
@@ -572,7 +632,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][0]
         )}`,
-        `${(energyBanking["cumulativeROI"][0] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][0] * 100).toFixed(0)}%`,
       ],
 
       [
@@ -589,7 +649,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][1]
         )}`,
-        `${(energyBanking["cumulativeROI"][1] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][1] * 100).toFixed(0)}%`,
       ],
       [
         "Year 2",
@@ -605,7 +665,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][2]
         )}`,
-        `${(energyBanking["cumulativeROI"][2] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][2] * 100).toFixed(0)}%`,
       ],
       [
         "Year 3",
@@ -621,7 +681,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][3]
         )}`,
-        `${(energyBanking["cumulativeROI"][3] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][3] * 100).toFixed(0)}%`,
       ],
       [
         "Year 4",
@@ -637,7 +697,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][4]
         )}`,
-        `${(energyBanking["cumulativeROI"][4] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][4] * 100).toFixed(0)}%`,
       ],
       [
         "Year 5",
@@ -653,7 +713,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][5]
         )}`,
-        `${(energyBanking["cumulativeROI"][5] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][5] * 100).toFixed(0)}%`,
       ],
       [
         "Year 10",
@@ -669,7 +729,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][10]
         )}`,
-        `${(energyBanking["cumulativeROI"][10] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][10] * 100).toFixed(0)}%`,
       ],
       [
         "Year 25",
@@ -685,7 +745,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][25]
         )}`,
-        `${(energyBanking["cumulativeROI"][25] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][25] * 100).toFixed(0)}%`,
       ],
       [
         "Year 50",
@@ -701,7 +761,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][50]
         )}`,
-        `${(energyBanking["cumulativeROI"][50] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][50] * 100).toFixed(0)}%`,
       ],
       [
         "Year 100",
@@ -717,7 +777,7 @@ function downloadPDF() {
         `${formattedValue.format(
           energyBanking["investmentRateOfSolarSaving"][100]
         )}`,
-        `${(energyBanking["cumulativeROI"][100] * 100).toFixed(2)}%`,
+        `${(energyBanking["cumulativeROI"][100] * 100).toFixed(0)}%`,
       ],
     ],
   });
