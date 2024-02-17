@@ -14780,7 +14780,7 @@ const popularMovies = [
     percentOfTotal: "---",
   },
   {
-    year: 1947, 
+    year: 1947,
     cumulativeGross: "$6,100,000",
     percentChangeLY: "---",
     releases: 1,
@@ -15312,29 +15312,28 @@ function getWeekday(month, day, year) {
   return weekdays[weekdayIndex];
 }
 function calculateAge(birthMonth, birthDay, birthYear) {
+  const today = new Date();
   const birthDate = new Date(birthYear, birthMonth - 1, birthDay);
-  const now = new Date();
 
-  let years = now.getFullYear() - birthYear;
-  let months = now.getMonth() - birthMonth;
-  let days = now.getDate() - birthDay;
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let months = today.getMonth() - birthDate.getMonth();
+  let days = today.getDate() - birthDate.getDate();
 
-  // If the birth date hasn't occurred yet this year
+  // If the birth date hasn't occurred yet this year, subtract one year
   if (months < 0 || (months === 0 && days < 0)) {
     years--;
     months += 12;
   }
 
-  // If the birth date has occurred but not yet the birth day
+  // If the birth date occurred earlier this month, adjust the months and days
   if (days < 0) {
-    const lastMonth = now.getMonth() - 1;
-    const daysInLastMonth = new Date(
-      now.getFullYear(),
-      lastMonth + 1,
+    const monthDays = new Date(
+      today.getFullYear(),
+      today.getMonth(),
       0
     ).getDate();
-    days = daysInLastMonth + days;
     months--;
+    days += monthDays;
   }
 
   return { years, months, days };
@@ -15642,6 +15641,5 @@ function convertToDate(day, month, year) {
   // Return the formatted date string
   return `${day} ${monthName} ${year}`;
 }
-
 
 calculateResult();
