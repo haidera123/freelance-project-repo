@@ -673,11 +673,10 @@ function removeDefault() {
   console.log(pageReloaded);
 
   // Reload the page after all HTML content is loaded if it hasn't been reloaded before
-  window.onload = function () {
     if (!pageReloaded) {
       window.location.reload();
       localStorage.setItem("pageReloaded", "true"); // Store the flag indicating the page has been reloaded
     }
-  };
+  
   console.log("Hello world");
 })();
