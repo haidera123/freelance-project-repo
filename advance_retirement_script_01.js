@@ -221,7 +221,7 @@ function formatYAxisLabel(num) {
   const regexp = /\.0+$|(?<=\.[0-9]*[1-9])0+$/;
   const item = lookup.findLast((item) => num >= item.value);
   return item
-    ? (num / item.value).toFixed(0).replace(regexp, "").concat(item.symbol)
+    ? (num / item.value).toFixed(1).replace(regexp, "").concat(item.symbol)
     : "0";
 }
 function formatLegendLabel(name) {
